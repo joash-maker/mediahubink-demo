@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Workspace Agent · Live Demo · Mediahubink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1E2761; --blue: #2196C4; --ice: #D6E4F7;
+    --light: #F4F8FC; --text: #1A1A2E; --sub: #8AADD4;
+    --green: #4ADE80; --white: #FFFFFF; --pink: #E91E8C;
+    --gold: #F59E0B;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #0B1229 0%, #162050 50%, #0B1A36 100%); min-height: 100vh; color: var(--white); overflow-x: hidden; }
+
+  /* ── HERO ── */
+  .hero { text-align: center; padding: 40px 20px 28px; }
+  .mediahubink-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(33,150,196,0.12); border: 1px solid rgba(33,150,196,0.3); border-radius: 24px; padding: 6px 18px; font-size: 11px; letter-spacing: 1.8px; color: #7EC8E3; margin-bottom: 16px; font-weight: 700; text-transform: uppercase; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(24px,5vw,38px); font-weight: 700; margin-bottom: 10px; line-height: 1.2; }
+  .hero h1 span { color: #7EC8E3; }
+  .hero p { font-size: 15px; color: rgba(255,255,255,0.55); max-width: 520px; margin: 0 auto 10px; line-height: 1.6; }
+  .hero-note { display: inline-block; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #FCD34D; margin-top: 6px; }
+
+  /* ── TABS ── */
+  .tabs-wrap { max-width: 900px; margin: 0 auto 20px; padding: 0 16px; }
+  .tabs { display: flex; gap: 6px; background: rgba(255,255,255,0.07); border-radius: 14px; padding: 5px; }
+  .tab { flex: 1; padding: 10px 8px; border: none; border-radius: 10px; cursor: pointer; background: transparent; color: rgba(255,255,255,0.55); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .tab.active { background: var(--white); color: var(--navy); font-weight: 700; }
+  .tab:hover:not(.active) { background: rgba(255,255,255,0.1); color: white; }
+
+  .panel { display: none; max-width: 900px; margin: 0 auto; padding: 0 16px 120px; }
+  .panel.active { display: block; }
+
+  /* ── BROWSER MOCK ── */
+  .info-box { background: rgba(33,150,196,0.1); border: 1px solid rgba(33,150,196,0.25); border-radius: 12px; padding: 12px 16px; font-size: 13px; color: rgba(255,255,255,0.7); display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+  .browser-wrap { border-radius: 14px 14px 0 0; overflow: hidden; border: 1px solid #2A3A5A; background: white; }
+  .browser-bar { background: #F1F3F4; padding: 9px 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #DDD; }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .browser-url { flex: 1; background: white; border: 1px solid #DDD; border-radius: 6px; padding: 3px 10px; font-size: 11px; color: #5F6368; }
+  .browser-body { padding: 20px 22px; background: white; }
+  .nw-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--navy); }
+  .nw-logo span { color: var(--blue); }
+  .nw-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .nw-enquire { background: var(--blue); color: white; padding: 7px 16px; border-radius: 7px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; }
+  .nw-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); font-weight: 700; margin-bottom: 8px; }
+  .nw-desc { font-size: 12px; color: #555; line-height: 1.6; margin-bottom: 14px; }
+  .office-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .office-card { border-radius: 9px; padding: 12px; border: 2px solid; }
+  .oc-type { font-weight: 700; font-size: 12px; margin-bottom: 3px; }
+  .oc-size { font-size: 11px; color: #666; }
+  .oc-cap { font-size: 10px; color: #888; margin-top: 4px; }
+  .browser-footer { background: rgba(255,255,255,0.04); border: 1px dashed rgba(33,150,196,0.3); border-top: none; border-radius: 0 0 14px 14px; padding: 10px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.35); }
+
+  /* ── HOW IT WORKS ── */
+  .how-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 20px; }
+  .how-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; }
+  .how-card .icon { font-size: 28px; margin-bottom: 10px; }
+  .how-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #7EC8E3; }
+  .how-card p { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: rgba(33,150,196,0.1); border: 1px solid rgba(33,150,196,0.25); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #7EC8E3; line-height: 1; }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 4px; }
+  .cta-box { background: linear-gradient(135deg, rgba(30,39,97,0.8), rgba(33,150,196,0.3)); border: 1px solid rgba(33,150,196,0.4); border-radius: 16px; padding: 28px; text-align: center; }
+  .cta-box h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 8px; }
+  .cta-box p { font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 20px; }
+  .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .cta-btn { padding: 12px 24px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; display: inline-block; }
+  .cta-btn.primary { background: var(--blue); color: white; }
+  .cta-btn.secondary { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.3); }
+  .cta-btn:hover { transform: translateY(-2px); }
+
+  /* ── CHAT TOGGLE ── */
+  #chat-toggle { position: fixed; bottom: 26px; right: 26px; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; background: linear-gradient(135deg, var(--blue), var(--navy)); box-shadow: 0 4px 24px rgba(33,150,196,0.55); font-size: 24px; transition: transform 0.25s; z-index: 999; display: flex; align-items: center; justify-content: center; color: white; }
+  #chat-toggle.open { transform: rotate(45deg); font-size: 20px; }
+  .chat-tooltip { position: fixed; bottom: 96px; right: 26px; background: var(--navy); color: white; padding: 8px 14px; border-radius: 12px 12px 3px 12px; font-size: 12px; white-space: nowrap; box-shadow: 0 4px 14px rgba(0,0,0,0.3); z-index: 998; transition: opacity 0.4s; }
+  .pulse-ring { position: fixed; bottom: 26px; right: 26px; width: 60px; height: 60px; border-radius: 50%; background: var(--blue); z-index: 997; animation: pulse-out 1.8s ease-out infinite; }
+  @keyframes pulse-out { 0%{transform:scale(1);opacity:0.6} 100%{transform:scale(1.9);opacity:0} }
+
+  /* ── CHAT WINDOW ── */
+  #chat-window { position: fixed; bottom: 100px; right: 26px; width: 370px; height: 580px; border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 70px rgba(0,0,0,0.4); z-index: 998; animation: slide-up 0.32s cubic-bezier(0.16,1,0.3,1) forwards; }
+  @keyframes slide-up { from{opacity:0;transform:translateY(18px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+  .chat-header { background: linear-gradient(135deg, var(--navy), var(--blue)); padding: 16px 18px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .chat-avatar { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .chat-header-info { flex: 1; }
+  .chat-name { color: white; font-weight: 700; font-size: 14px; font-family: 'Playfair Display', serif; }
+  .chat-status { color: rgba(255,255,255,0.7); font-size: 11px; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .chat-loc { color: rgba(255,255,255,0.5); font-size: 10px; text-align: right; }
+  .demo-ribbon { background: rgba(245,158,11,0.2); border-bottom: 1px solid rgba(245,158,11,0.3); padding: 5px 12px; text-align: center; font-size: 10.5px; color: #FCD34D; font-weight: 600; letter-spacing: 0.5px; flex-shrink: 0; }
+  #messages { flex: 1; overflow-y: auto; padding: 14px 12px; background: var(--light); display: flex; flex-direction: column; gap: 10px; }
+  .msg-wrap { display: flex; flex-direction: column; animation: fade-up 0.28s ease forwards; }
+  .msg-wrap.user { align-items: flex-end; }
+  .msg-wrap.assistant { align-items: flex-start; }
+  @keyframes fade-up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg-bubble { max-width: 86%; padding: 10px 14px; font-size: 13.5px; line-height: 1.55; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .msg-bubble.user { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; border-radius: 18px 18px 3px 18px; }
+  .msg-bubble.assistant { background: white; color: var(--text); border-radius: 3px 18px 18px 18px; }
+  .msg-time { font-size: 10px; color: var(--sub); margin-top: 3px; padding: 0 4px; }
+  .typing { display: flex; gap: 5px; padding: 12px 16px; background: white; border-radius: 3px 18px 18px 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); width: fit-content; }
+  .typing span { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); animation: tdot 1.2s ease-in-out infinite; }
+  .typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
+  @keyframes tdot { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-7px)} }
+  #quick-replies { padding: 8px 12px 4px; background: var(--light); display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
+  .quick-btn { padding: 5px 11px; border-radius: 18px; border: 1.5px solid var(--navy); background: white; color: var(--navy); font-size: 11.5px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all 0.18s; }
+  .quick-btn:hover { background: var(--navy); color: white; }
+  .chat-input-area { padding: 10px 12px; background: white; border-top: 1px solid #E8EEF6; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  #chat-input { flex: 1; border: 1.5px solid #D6E4F4; border-radius: 12px; padding: 9px 14px; font-size: 13.5px; font-family: 'DM Sans', sans-serif; background: var(--light); color: var(--text); outline: none; transition: border-color 0.2s; }
+  #chat-input:focus { border-color: var(--blue); }
+  #send-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; background: var(--blue); color: white; font-size: 16px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  #send-btn:disabled { background: #D6E4F4; cursor: default; }
+  #send-btn:not(:disabled):hover { background: #1A5A9A; }
+  .chat-footer-bar { background: var(--navy); padding: 6px; text-align: center; font-size: 9.5px; color: rgba(255,255,255,0.4); flex-shrink: 0; }
+
+  .page-footer { text-align: center; padding: 20px; font-size: 12px; color: rgba(255,255,255,0.25); }
+
+  @media(max-width:600px){
+    #chat-window{bottom:0;right:0;left:0;width:100%;height:78vh;border-radius:22px 22px 0 0}
+    .office-cards,.how-grid{grid-template-columns:1fr}
+    .stats-row{grid-template-columns:1fr 1fr}
+    .cta-buttons{flex-direction:column;align-items:center}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="mediahubink-badge">⚡ Mediahubink · Live Product Demo</div>
+  <h1>The AI Agent for <span>Flexible Workspace</span></h1>
+  <p>See exactly how your website could qualify leads, answer enquiries and capture contact details — 24 hours a day, 7 days a week.</p>
+  <div class="hero-note">⚠️ This is a demo using a fictional workspace. All data is for illustration purposes only.</div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('demo',this)">🌐 Live Demo</button>
+    <button class="tab" onclick="showTab('how',this)">💡 How It Works</button>
+    <button class="tab" onclick="showTab('get',this)">🚀 Get This</button>
+  </div>
+</div>
+
+<!-- DEMO TAB -->
+<div id="tab-demo" class="panel active">
+  <div class="info-box">
+    <span style="font-size:18px;flex-shrink:0">💬</span>
+    <span>The chat widget (bottom-right) is fully live — powered by real AI. Try asking about offices, pricing, or booking a viewing. This is exactly what your customers would experience.</span>
+  </div>
+  <div class="browser-wrap">
+    <div class="browser-bar">
+      <div class="browser-dots">
+        <span style="background:#FF5F57"></span>
+        <span style="background:#FEBC2E"></span>
+        <span style="background:#28C840"></span>
+      </div>
+      <div class="browser-url">🔒 northmillworkspace.co.uk/offices</div>
+    </div>
+    <div class="browser-body">
+      <div class="nw-header">
+        <div class="nw-logo">Northmill <span>Workspace</span></div>
+        <button class="nw-enquire">Enquire Now</button>
+      </div>
+      <div class="nw-title">🏢 Flexible Office Space in Leeds</div>
+      <p class="nw-desc">From compact studio units for sole traders to full suite offices for teams of 30. All-inclusive serviced options available — move in within days.</p>
+      <div class="office-cards">
+        <div class="office-card" style="border-color:#2196C4"><div class="oc-type" style="color:#2196C4">Studio Unit</div><div class="oc-size">80–120 sq ft</div><div class="oc-cap">👤 1–3 people</div></div>
+        <div class="office-card" style="border-color:#1A7A9A"><div class="oc-type" style="color:#1A7A9A">Standard Office</div><div class="oc-size">120–600 sq ft</div><div class="oc-cap">👥 1–15 people</div></div>
+        <div class="office-card" style="border-color:#1E2761"><div class="oc-type" style="color:#1E2761">Suite Office</div><div class="oc-size">600–1,200 sq ft</div><div class="oc-cap">👥 15–30 people</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="browser-footer">↑ This is how the agent sits on a real workspace website — always visible, always available</div>
+</div>
+
+<!-- HOW IT WORKS TAB -->
+<div id="tab-how" class="panel">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">60%</div><div class="stat-label">of B2B buyers research office space outside office hours</div></div>
+    <div class="stat-card"><div class="stat-num">9×</div><div class="stat-label">higher conversion when you respond within 5 minutes</div></div>
+    <div class="stat-card"><div class="stat-num">47h</div><div class="stat-label">average response time from flexible workspace operators</div></div>
+  </div>
+  <div class="how-grid">
+    <div class="how-card"><div class="icon">🎯</div><h3>Qualifies Every Lead</h3><p>Asks the right questions — team size, move-in date, budget, managed vs serviced — so your team only speaks to ready prospects.</p></div>
+    <div class="how-card"><div class="icon">📋</div><h3>Captures Contact Details</h3><p>Naturally collects name, email and phone number during conversation. No forms. No friction. Just conversation.</p></div>
+    <div class="how-card"><div class="icon">📊</div><h3>Logs to Google Sheets</h3><p>Every lead automatically logged with timestamp, requirements and whether it came in after hours. Ready for your team to action.</p></div>
+    <div class="how-card"><div class="icon">⚡</div><h3>Live in 48 Hours</h3><p>Trained on your offices, pricing and team. Embedded on your website. No IT team needed. Up and running within two days.</p></div>
+    <div class="how-card"><div class="icon">🌙</div><h3>Always Available</h3><p>Answers enquiries at 2am on a Sunday the same way it does at 10am on a Monday. Your business never goes offline.</p></div>
+    <div class="how-card"><div class="icon">🔧</div><h3>Fully Customisable</h3><p>Trained on your specific offices, pricing, team names and FAQs. Sounds like your brand, not a generic chatbot.</p></div>
+  </div>
+</div>
+
+<!-- GET THIS TAB -->
+<div id="tab-get" class="panel">
+  <div class="cta-box" style="margin-bottom:16px">
+    <h3>Want this for your business?</h3>
+    <p>We're currently offering a <strong>free 30-day pilot</strong> to flexible workspace operators. No setup fee. No contract. Just results.</p>
+    <div class="cta-buttons">
+      <a class="cta-btn primary" href="mailto:joash@mediahubink.com?subject=AI Agent Pilot Enquiry">✉ Email Joash</a>
+      <a class="cta-btn secondary" href="tel:07764182758">📱 07764 182 758</a>
+    </div>
+  </div>
+  <div class="how-grid">
+    <div class="how-card"><div class="icon">🆓</div><h3>30-Day Free Pilot</h3><p>Get the agent live on your website for a full 30 days at zero cost. See real results before committing to anything.</p></div>
+    <div class="how-card"><div class="icon">📅</div><h3>Live in 48 Hours</h3><p>Day 1: knowledge base built. Day 2: widget on your site. Day 3: leads flowing in.</p></div>
+    <div class="how-card"><div class="icon">💷</div><h3>Simple Pricing</h3><p>After the pilot: from £397/month. No setup fee. Cancel anytime. Costs less than a single missed enquiry.</p></div>
+    <div class="how-card"><div class="icon">🏢</div><h3>Built for Workspace Operators</h3><p>Designed specifically for flexible workspace, serviced offices and commercial property businesses.</p></div>
+  </div>
+  <div style="text-align:center;margin-top:8px;padding:16px;background:rgba(255,255,255,0.04);border-radius:12px;font-size:13px;color:rgba(255,255,255,0.5)">
+    Built by <strong style="color:white">Joash Perera</strong> · Mediahubink · joash@mediahubink.com · 07764 182 758
+  </div>
+</div>
+
+<div class="page-footer">Mediahubink · AI-Powered Business Tools · mediahubink.com</div>
+
+<!-- CHAT UI -->
+<div class="pulse-ring" id="pulse-ring"></div>
+<div class="chat-tooltip" id="chat-tooltip">💬 Try the live demo</div>
+<button id="chat-toggle" onclick="toggleChat()">💬</button>
+
+<div id="chat-window" style="display:none">
+  <div class="chat-header">
+    <div class="chat-avatar">🏢</div>
+    <div class="chat-header-info">
+      <div class="chat-name">Northmill Workspace</div>
+      <div class="chat-status"><span class="status-dot"></span>AI Assistant · Always available</div>
+    </div>
+    <div class="chat-loc">Canal Road<br>Leeds</div>
+  </div>
+  <div class="demo-ribbon">⚡ MEDIAHUBINK AI DEMO · Fictional workspace for demonstration purposes</div>
+  <div id="messages"></div>
+  <div id="quick-replies">
+    <button class="quick-btn" onclick="quickSend('What offices do you have?')">What offices do you have?</button>
+    <button class="quick-btn" onclick="quickSend('How much does it cost?')">How much?</button>
+    <button class="quick-btn" onclick="quickSend('I need space for 8 people')">Space for 8 people</button>
+    <button class="quick-btn" onclick="quickSend('Can I book a viewing?')">Book a viewing</button>
+  </div>
+  <div class="chat-input-area">
+    <input id="chat-input" type="text" placeholder="Ask about offices, pricing, viewings..." onkeydown="if(event.key==='Enter')sendMessage()"/>
+    <button id="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+  <div class="chat-footer-bar">Powered by Mediahubink AI · joash@mediahubink.com · 07764 182 758</div>
+</div>
+
+<script>
+  let chatOpen = false, chatStarted = false, history = [];
+
+  function showTab(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  setTimeout(() => {
+    const pr = document.getElementById('pulse-ring');
+    const tt = document.getElementById('chat-tooltip');
+    if(pr) pr.style.display = 'none';
+    if(tt) tt.style.opacity = '0';
+  }, 7000);
+
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    const win = document.getElementById('chat-window');
+    const btn = document.getElementById('chat-toggle');
+    win.style.display = chatOpen ? 'flex' : 'none';
+    btn.classList.toggle('open', chatOpen);
+    btn.textContent = chatOpen ? '✕' : '💬';
+    document.getElementById('chat-tooltip').style.opacity = '0';
+    document.getElementById('pulse-ring').style.display = 'none';
+
+    if (chatOpen && !chatStarted) {
+      chatStarted = true;
+      const h = new Date().getHours();
+      const greeting = (h < 8 || h >= 18)
+        ? "Hi there! 👋 I'm the Northmill Workspace AI assistant — available even outside office hours. Looking for flexible office space in Leeds? Tell me a bit about what you need and I'll point you in the right direction."
+        : "Hi there! 👋 Welcome to Northmill Workspace. I'm here to help you find the perfect office in Leeds. Are you looking for space for yourself, a small team, or a larger group?";
+      appendMsg('assistant', greeting);
+      history.push({ role: 'assistant', content: greeting });
+    }
+    if (chatOpen) setTimeout(() => document.getElementById('chat-input').focus(), 300);
+  }
+
+  function appendMsg(role, content) {
+    const c = document.getElementById('messages');
+    if (history.length > 1) { const qr = document.getElementById('quick-replies'); if(qr) qr.style.display = 'none'; }
+    const wrap = document.createElement('div');
+    wrap.className = `msg-wrap ${role}`;
+    const bubble = document.createElement('div');
+    bubble.className = `msg-bubble ${role}`;
+    bubble.textContent = content;
+    const time = document.createElement('div');
+    time.className = 'msg-time';
+    time.textContent = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+    wrap.appendChild(bubble);
+    wrap.appendChild(time);
+    c.appendChild(wrap);
+    c.scrollTop = c.scrollHeight;
+  }
+
+  function showTyping() {
+    const c = document.getElementById('messages');
+    const t = document.createElement('div');
+    t.id = 'typing'; t.className = 'msg-wrap assistant';
+    t.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+    c.appendChild(t); c.scrollTop = c.scrollHeight;
+  }
+
+  function hideTyping() { const t = document.getElementById('typing'); if(t) t.remove(); }
+
+  async function sendMessage() {
+    const inp = document.getElementById('chat-input');
+    const text = inp.value.trim();
+    if (!text) return;
+    const btn = document.getElementById('send-btn');
+    inp.value = ''; btn.disabled = true;
+    const qr = document.getElementById('quick-replies'); if(qr) qr.style.display = 'none';
+    appendMsg('user', text);
+    history.push({ role: 'user', content: text });
+    showTyping();
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      });
+      const data = await res.json();
+      hideTyping();
+      if (!res.ok || data.error) throw new Error(data.error || 'Error');
+      history.push({ role: 'assistant', content: data.reply });
+      appendMsg('assistant', data.reply);
+    } catch(e) {
+      hideTyping();
+      appendMsg('assistant', "Sorry, I hit a technical issue. To find out more about this AI agent technology, contact Joash at Mediahubink: joash@mediahubink.com or 07764 182 758.");
+    }
+    btn.disabled = false; inp.focus();
+  }
+
+  function quickSend(text) { document.getElementById('chat-input').value = text; sendMessage(); }
+</script>
+</body>
+</html>
