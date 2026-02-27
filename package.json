@@ -1,0 +1,8 @@
+{
+  "name": "mediahubink-workspace-demo",
+  "version": "1.0.0",
+  "description": "AI Agent Demo by Mediahubink",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.0"
+  }
+}
